@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLASSIFIED: OAKHAVEN ARCHIVES (1920-1994) - DECLASSIFIED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #0f0f0f;
+            --text-primary: #e0e0e0;
+            --text-dim: #888;
+            --accent-red: #cc0000;
+            --accent-green: #00aa00;
+            --scanline-dark: rgba(0,0,0,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Courier Prime', monospace;
+            line-height: 1.7;
+            padding: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Enhanced CRT Scanlines + Noise */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 2px,
+                    var(--scanline-dark) 2px,
+                    var(--scanline-dark) 4px
+                ),
+                radial-gradient(circle at 20% 80%, rgba(255,0,0,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,255,0,0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 9998;
+            animation: scanlines 0.08s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 0 4px, 10px 10px; }
+        }
+
+        /* Flicker overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+            z-index: 9999;
+            animation: flicker 4s infinite;
+            mix-blend-mode: multiply;
+        }
+
+        @keyframes flicker {
+            0%, 85%, 95%, 100% { opacity: 0; }
+            86% { opacity: 0.12; }
+            87% { opacity: 0.06; }
+            88% { opacity: 0.09; }
+            89% { opacity: 0.03; }
+            96% { opacity: 0.08; }
+            97% { opacity: 0.04; }
+            98% { opacity: 0.07; }
+        }
+
+        /* Audio visualization bars */
+        .audio-viz {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(to right, transparent, transparent 10px, rgba(204,0,0,0.3) 10px, rgba(204,0,0,0.3) 12px);
+            animation: audioPulse 2s ease-in-out infinite;
+            z-index: 10000;
+            opacity: 0.7;
+        }
+
+        @keyframes audioPulse {
+            0%, 100% { height: 20px; }
+            50% { height: 8px; }
+        }
+
+        #archive-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border: 2px solid #333;
+            box-shadow: 
+                inset 0 0 30px rgba(0,0,0,0.9),
+                0 0 60px rgba(204,0,0,0.15),
+                0 0 120px rgba(0,255,0,0.05);
+            padding: 3rem;
+            position: relative;
+            min-height: 100vh;
+            backdrop-filter: blur(1px);
+        }
+
+        #archive-container::before {
+            content: 'CLASSIFIED - EYES ONLY - LEVEL 4';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            color: var(--accent-red);
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 0 1.5rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px var(--accent-red);
+            animation: stampGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes stampGlow {
+            from { text-shadow: 0 0 5px var(--accent-red); }
+            to { text-shadow: 0 0 15px var(--accent-red), 0 0 25px var(--accent-red); }
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Creepster', cursive;
+            color: var(--accent-red);
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            position: relative;
+            text-shadow: 0 0 10px var(--accent-red);
+        }
+
+        h1 span {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.6em;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            text-shadow: none;
+            display: block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+            animation: linePulse 4s ease-in-out infinite;
+        }
+
+        @keyframes linePulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        h2 {
+            color: var(--accent-red);
+            border-bottom: 2px solid var(--accent-red);
+            padding-bottom: 0.5rem;
+            margin: 2.5rem 0 1.5rem;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            position: relative;
+            text-shadow: 0 0 5px rgba(204,0,0,0.5);
+        }
+
+        h2::before {
+            content: 'LOG ENTRY';
+            position: absolute;
+            left: -60px;
+            top: 0;
+            color: var(--accent-green);
+            font-size: 0.75rem;
+            animation: typewriter 0.5s steps(10) forwards;
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+        }
+
+        .date {
+            color: var(--accent-green);
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 0 0 5px var(--accent-green);
+        }
+
+        .entry {
+            margin-bottom: 2.5rem;
+            position: relative;
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .entry:nth-child(1) { animation-delay: 0.2s; }
+        .entry:nth-child(2) { animation-delay: 0.4s; }
+        .entry:nth-child(3) { animation-delay: 0.6s; }
+        .entry:nth-child(4) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .redacted {
+            background: linear-gradient(90deg, #000 0%, #111 50%, #000 100%);
+            color: #000;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .redacted::before {
+            content: '███ █████ ████';
+            color: #444;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            opacity: 0.9;
+            animation: redactedShake 0.1s infinite;
+        }
+
+        @keyframes redactedShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(1px); }
+            75% { transform: translateX(-1px); }
+        }
+
+        .redacted:hover {
+            color: var(--text-primary) !important;
+            background: linear-gradient(90deg, rgba(204,0,0,0.2), rgba(0,170,0,0.1));
+            box-shadow: 0 0 20px rgba(204,0,0,0.5);
+            transform: scale(1.02);
+        }
+
+        .redacted:hover::before {
+            opacity: 0;
+        }
+
+        .warning {
+            background: rgba(204,0,0,0.15);
+            border-left: 5px solid var(--accent-red);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--text-primary);
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 0 20px rgba(204,0,0,0.3);
+            animation: warningPulse 5s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(204,0,0,0.3); }
+            50% { box-shadow: 0 0 30px rgba(204,0,0,0.6); }
+        }
+
+        /* Random whispers */
+        .whisper {
+            position: absolute;
+            color: rgba(0,255,0,0.3);
+            font-size: 0.8rem;
+            animation: whisperFloat 10s linear infinite;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        @keyframes whisperFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .nav-links {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 1rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--text-dim);
+        }
+
+        a {
+            color: var(--accent-red);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s;
+            position: relative;
+            margin: 0 1rem;
+        }
+
+        a::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-red);
+            transition: width 0.4s;
+        }
+
+        a:hover {
+            color: var(--accent-green);
+            text-shadow: 0 0 10px var(--accent-green);
+        }
+
+        a:hover::before {
+            width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            #archive-container { padding: 2rem 1.5rem; }
+            h1 { font-size: 1.8rem; }
+        }
+
+        /* Hide audio viz on mobile */
+        @media (max-width: 480px) {
+            .audio-viz { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="audio-viz"></div>
+
+    <div id="archive-container">
+        <h1>OAKHAVEN ARCHIVES<br><span>1920-1994 • DECLASSIFIED PER FOIA-2025-447</span></h1>
+        
+        <div class="warning">
+            <strong>⚠️ LEVEL 4 RESTRICTION:</strong> Partial redactions active. Document contains descriptions of <span class="redacted">non-human vocalizations</span> and psychological hazards. Cease reading if auditory anomalies detected.
+        </div>
+        
+        <h2>TOWN TIMELINE</h2>
+        
+        <div class="entry">
+            <p><span class="date">[1922-03-14]:</span> Oakhaven founded by Silverton Mining Co. Initial surveys complete. Population: 47. No irregularities noted.</p>
+        </div>
+        
+        <div class="entry">
+            <p><span class="date">[1922-11-09]:</span> Mining ops halted. Crew reported <span class="redacted">ethereal singing emanating from 800ft shaft</span>. Spectral analysis negative. Shaft collapsed naturally.</p>
+        </div>
+        
+        <div class="entry">
+            <p><span class="date">[1931-05-22]:</span> Vagrant incursion. <span class="redacted">Survivors exhibit permanent tinnitus matching 1922 frequency (432Hz)</span>. Quarantined.</p>
+        </div>
+        
+        <div class="entry">
+            <p><span class="date">[1947-06-03]:</span> <span class="redacted">Child choir event</span>. 12 affected. Recovered with hypnotherapy. Audio logs <span class="redacted">destroyed per order</span>.</p>
+        </div>
+
+        <div class="entry">
+            <p><span class="date">[1962-08-17]:</span> Well water test positive for <span class="redacted">unknown alkaloid</span>. Hallucinations reported town-wide. Source: sealed mine.</p>
+        </div>
+
+        <div class="nav-links">
+            <p><a href="#">← PREVIOUS VOLUME</a> | <a href="#">AUDIO LOGS</a> | <a href="#">MAP ARCHIVE</a> | <a href="#">NEXT →</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic whispers
+        function createWhisper() {
+            const whispers = [
+                'it\'s still singing...',
+                'don\'t listen too long',
+                'the children knew',
+                'shaft never empty',
+                'frequency rising'
+            ];
+            const whisper = document.createElement('div');
+            whisper.className = 'whisper';
+            whisper.textContent = whispers[Math.floor(Math.random() * whispers.length)];
+            whisper.style.left = Math.random() * 100 + '%';
+            whisper.style.animationDuration = (8 + Math.random() * 4) + 's';
+            document.body.appendChild(whisper);
+            setTimeout(() => whisper.remove(), 14000);
+        }
+
+        // Staggered whispers
+        setInterval(createWhisper, 7000 + Math.random() * 5000);
+
+        // Random redacted glitches
+        document.querySelectorAll('.redacted').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                if (Math.random() < 0.3) {
+                    el.style.animation = 'glitch 0.1s linear infinite';
+                }
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.animation = '';
+            });
+        });
+
+        // Add glitch keyframe dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes glitch {
+                0% { transform: translate(0); }
+                20% { transform: translate(-2px, 2px); }
+                40% { transform: translate(-2px, -2px); }
+                60% { transform: translate(2px, 2px); }
+                80% { transform: translate(2px, -2px); }
+                100% { transform: translate(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

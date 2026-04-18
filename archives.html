@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL LOGIN v2.7.4 - OAKHAVEN SECNET [CLASSIFIED]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --primary: #00ff41;
+            --error: #ff0040;
+            --glitch-cyan: #00d9ff;
+            --glitch-red: #ff4757;
+            --bg: #0a0a0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--primary);
+            font-family: 'Courier Prime', monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            animation: flicker 0.15s infinite;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 65, 0.03) 2px,
+                rgba(0, 255, 65, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 999;
+            animation: crt-scanline-flicker 0.08s steps(2) infinite;
+        }
+
+        @keyframes crt-scanline-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.92; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.27861; }
+            5% { opacity: 0.34769; }
+            10% { opacity: 0.23604; }
+            15% { opacity: 0.90626; }
+            20% { opacity: 0.18128; }
+            25% { opacity: 0.83891; }
+            30% { opacity: 0.65583; }
+            35% { opacity: 0.67807; }
+            40% { opacity: 0.26559; }
+            45% { opacity: 0.84693; }
+            50% { opacity: 0.96019; }
+            55% { opacity: 0.08594; }
+            60% { opacity: 0.20313; }
+            65% { opacity: 0.71988; }
+            70% { opacity: 0.53455; }
+            75% { opacity: 0.37288; }
+            80% { opacity: 0.71428; }
+            85% { opacity: 0.70419; }
+            90% { opacity: 0.7003; }
+            95% { opacity: 0.36108; }
+            100% { opacity: 0.24387; }
+        }
+
+        #terminal {
+            background: rgba(0, 15, 0, 0.9);
+            border: 2px solid var(--primary);
+            padding: 50px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+            text-align: center;
+            position: relative;
+            min-width: 400px;
+            animation: glitch-text 8s steps(1) infinite;
+            font-size: 1.1rem;
+        }
+
+        @keyframes glitch-text {
+            0%, 90%, 100% {
+                transform: translate(0);
+                text-shadow: none;
+            }
+            93% {
+                transform: translate(-2px, 1px);
+                text-shadow: 2px 0 var(--glitch-cyan), -2px 0 var(--glitch-red);
+            }
+            95% {
+                transform: translate(2px, -1px);
+                text-shadow: -2px 0 var(--glitch-cyan), 2px 0 var(--glitch-red);
+            }
+            97% {
+                transform: translate(-1px, 0);
+                text-shadow: none;
+            }
+        }
+
+        h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 0.1em;
+        }
+
+        .warning {
+            font-size: 0.85rem;
+            color: var(--error);
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .log {
+            font-size: 0.75rem;
+            color: #00aa28;
+            margin: 15px 0;
+            opacity: 0.8;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .log-line {
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+            margin: 30px 0;
+            width: 100%;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        input::placeholder {
+            color: #008f11;
+        }
+
+        .cursor {
+            display: inline-block;
+            background: var(--primary);
+            width: 2px;
+            height: 1.4rem;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        button {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 12px 30px;
+            cursor: pointer;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        #error-msg {
+            color: var(--error);
+            margin-top: 20px;
+            font-size: 1rem;
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .corruption {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--glitch-red) 0%, transparent 10%, transparent 90%, var(--glitch-cyan) 100%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+            animation: corrupt 0.3s forwards;
+        }
+
+        @keyframes corrupt {
+            0% { opacity: 0.8; transform: skew(5deg); }
+            100% { opacity: 0; transform: skew(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, body::before, #terminal, .cursor {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="corruption" id="corruption"></div>
+
+    <div id="terminal">
+        <div class="log">
+            <div class="log-line">
+                [SYSLOG] TRACE: 192.168.1.*** DETECTED | QUARANTINE PROTOCOL ACTIVE<br>
+                [WARN] ANOMALY DETECTED IN SECTOR 7 | HUM FREQUENCY: 19.22Hz<br>
+                [ALERT] EYES ON TERMINAL | BREACH ATTEMPT LOGGED: 2026-04-17T23:30:00Z<br>
+                [SECNET] SIGNAL INTERCEPTED | HE IS WATCHING<br>
+                [SYSLOG] TRACE: 192.168.1.*** DETECTED...
+            </div>
+        </div>
+
+        <h1>TERMINAL_LOGIN.EXE v2.7.4</h1>
+        <div style="font-size: 0.8rem; margin-bottom: 20px;">OAKHAVEN SECNET [CLASSIFIED]</div>
+        
+        <p class="warning">*** UNAUTHORIZED ACCESS IS MONITORED & TRACED ***</p>
+        
+        <p style="font-size: 0.75rem; margin-bottom: 20px;">$ ENTER CLEARANCE KEY:</p>
+        
+        <input type="password" id="passwordField" placeholder="____" maxlength="4">
+        <span class="cursor" id="cursor">_</span>
+        <br>
+        <button onclick="checkPassword()">INITIALIZE PROTOCOL</button>
+        
+        <p id="error-msg">ACCESS DENIED. BREACH LOGGED. SIGNAL CORRUPTED.</p>
+    </div>
+
+<script>
+// Typing cursor (keep your existing)
+const cursor = document.getElementById('cursor');
+const input = document.getElementById('passwordField');
+input.oninput = () => {
+    cursor.style.display = (input.value.length >= 4) ? 'none' : 'inline-block';
+};
+
+// Random subtle glitches (keep your existing)
+setInterval(() => {
+    if (Math.random() < 0.1) {
+        document.body.style.transform = 'translate(1px, 1px)';
+        setTimeout(() => { document.body.style.transform = ''; }, 50);
+    }
+}, 2000);
+
+// *** UPDATED PASSWORD CHECK - NOW "1922" ***
+function checkPassword() {
+    const pass = document.getElementById('passwordField').value.trim();
+    const error = document.getElementById('error-msg');
+    const corruption = document.getElementById('corruption');
+    
+    if (pass === '1922') {
+        // ARG VICTORY! Redirect to victory page
+        window.location.href = 'victory.html';
+    } else {
+        // Wrong password: show error + corruption
+        error.style.display = 'block';
+        document.body.style.background = '#200000';
+        corruption.style.display = 'block';
+        setTimeout(() => {
+            document.body.style.background = 'var(--bg)';
+            corruption.style.display = 'none';
+            error.style.display = 'none';
+        }, 800);
+    }
+}
+
+// Enter key support
+document.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkPassword();
+});
+</script>
+</body>
+</html>

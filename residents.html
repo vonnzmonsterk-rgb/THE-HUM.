@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAKHAVEN CENSUS - 1994</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@1&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #00ff41;
+            --accent: #00cc33;
+            --dark: #001100;
+            --scanline: rgba(0, 255, 65, 0.03);
+            --glitch-r: #ff0040;
+            --glitch-c: #00ffcc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 40px 30px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* CRT Scanlines Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                var(--scanline) 2px,
+                var(--scanline) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+            animation: scan-flicker 0.1s steps(2) infinite;
+        }
+
+        @keyframes scan-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body::before { animation: none; }
+        }
+
+        h1 {
+            font-family: 'IM Fell DW Pica', serif;
+            font-style: italic;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px var(--accent);
+            animation: title-glitch 20s steps(1) infinite;
+        }
+
+        @keyframes title-glitch {
+            0%, 90%, 100% { transform: translate(0); text-shadow: 0 0 10px var(--accent); }
+            91% { transform: translate(-2px, 1px); text-shadow: 2px 0 var(--glitch-c), -2px 0 var(--glitch-r); }
+            92% { transform: translate(2px, -1px); text-shadow: -2px 0 var(--glitch-c), 2px 0 var(--glitch-r); }
+            93% { transform: translate(-1px); }
+            94% { transform: translate(1px); text-shadow: none; }
+        }
+
+        .population {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .population span {
+            color: #ff0000;
+            font-size: 1.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 20, 0, 0.3);
+            border: 2px solid var(--accent);
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid var(--dark);
+            padding: 20px 15px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        th {
+            background: var(--dark);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(0, 30, 0, 0.2);
+        }
+
+        tr:hover {
+            background: rgba(0, 255, 65, 0.1);
+            transform: translateX(2px);
+            box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .portrait {
+            width: 60px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #222 0%, #111 50%, #000 100%);
+            border: 2px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .portrait::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 30px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: eye-twitch 3s ease-in-out infinite;
+        }
+
+        .portrait::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 40px;
+            height: 15px;
+            background: #333;
+            border-radius: 0 0 20px 20px;
+        }
+
+        @keyframes eye-twitch {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(1.2) translateX(2px); }
+        }
+
+        tr:hover .portrait {
+            animation: portrait-glitch 0.5s steps(2);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        @keyframes portrait-glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translateX(3px) skewX(5deg); }
+            40% { transform: translateX(-2px) skewX(-3deg); }
+            60% { transform: translateY(1px) scale(1.05); }
+        }
+
+        /* Enhanced Status Hover */
+        .status-cell {
+            cursor: help;
+            position: relative;
+        }
+
+        .status-cell .normal-text {
+            display: inline;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-cell .hidden-text {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #ff0000;
+            font-weight: 700;
+            font-size: 0.85em;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px #ff0000;
+            animation: reveal-glitch 0.8s steps(3);
+            background: rgba(0,0,0,0.9);
+            padding: 2px 6px;
+            border: 1px solid #ff0000;
+        }
+
+        .status-cell:hover .normal-text {
+            opacity: 0;
+        }
+
+        .status-cell:hover .hidden-text {
+            display: inline;
+        }
+
+        @keyframes reveal-glitch {
+            0% { transform: translateY(10px); opacity: 0; }
+            20% { transform: translate(-2px, 2px) skewX(10deg); }
+            40% { transform: translate(2px, -1px) skewX(-5deg); }
+            60% { transform: translate(0); }
+            100% { transform: translate(0); opacity: 1; }
+        }
+
+        .nav {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav a {
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid var(--accent);
+            padding: 10px 20px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav a:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent);
+            animation: link-glitch 0.3s steps(1);
+        }
+
+        @keyframes link-glitch {
+            0%, 100% { transform: translate(0); }
+            50% { transform: translateX(2px); }
+        }
+
+        .warning {
+            margin-top: 60px;
+            padding: 20px;
+            background: rgba(20, 0, 0, 0.5);
+            border: 1px solid #660000;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* Random Flicker JS */
+        .flicker { animation: flicker 0.05s steps(1) infinite; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="index.html"><< BACK TO MAIN DIRECTORY</a>
+    </div>
+
+    <h1>OAKHAVEN RESIDENT DIRECTORY</h1>
+    <p class="population">TOTAL POPULATION: <span style="text-decoration: line-through;">1,240</span> <span>0</span></p>
+
+    <table>
+        <tr>
+            <th>Portrait</th>
+            <th>Resident</th>
+            <th>Last Known Location</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td><div class="portrait"></div></td>
+            <td>Elias Thorne</td>
+            <td>Radio Tower</td>
+            <td class="status-cell">
+                <span class="normal-text">In Maintenance</span>
+                <span class="hidden-text">TRANSMITTING YOUR POSITION</span>
+            </td>
+        </tr>
+        <tr>
+            <td><div class="portrait"></div></td>
+            <td>Mary Vance (Sister Mary)</td>
+            <td>St. Jude's Basement</td>
+            <td class="status-cell">
+                <span class="normal-text">Praying</span>
+                <span class="hidden-text">SHE HAS NO EYES</span>
+            </td>
+        </tr>
+        <tr>
+            <td><div class="portrait"></div></td>
+            <td>Arthur Gable</td>
+            <td>Main St. Library</td>
+            <td class="status-cell">
+                <span class="normal-text">Searching Records</span>
+                <span class="hidden-text">HE IS UNDER THE FLOORBOARDS</span>
+            </td>
+        </tr>
+    </table>
+
+    <p class="warning">
+        NOTE: If a resident approaches without blinking, do not engage. 
+        Report to "The Hum" protocols immediately. 
+        Last audit: 04/17/1994 - 03:33 AM.
+    </p>
+
+    <script>
+        // Subtle random flicker every 5-10s
+        setInterval(() => {
+            document.body.style.animation = 'flicker 0.03s steps(1)';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 50);
+        }, Math.random() * 5000 + 5000);
+
+        // Add class for accessibility
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.body.style.animation = 'none';
+        }
+    </script>
+</body>
+</html>

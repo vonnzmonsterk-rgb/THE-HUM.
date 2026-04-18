@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHASE 4: THE HUM</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #020203;
+            --panel: rgba(8, 8, 12, 0.92);
+            --panel-border: rgba(255, 70, 70, 0.18);
+            --text: #d7d7dc;
+            --muted: #868692;
+            --accent: #ff3a3a;
+            --accent2: #7f7fff;
+            --shadow: rgba(0, 0, 0, 0.75);
+            --mx: 50%;
+            --my: 50%;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            width: 100%;
+            min-height: 100%;
+            background:
+                radial-gradient(circle at var(--mx) var(--my), rgba(255, 50, 50, 0.14), transparent 18%),
+                radial-gradient(circle at top, rgba(255, 40, 40, 0.06), transparent 32%),
+                linear-gradient(180deg, #060608 0%, #020203 100%);
+            color: var(--text);
+            font-family: "Courier New", Courier, monospace;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.02) 0,
+                    rgba(255,255,255,0.02) 1px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            opacity: 0.5;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            animation: scanMove 9s linear infinite;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at var(--mx) var(--my), rgba(255, 50, 50, 0.18), transparent 12%),
+                radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.05), transparent 22%);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            transition: opacity 0.08s linear;
+            opacity: 0.7;
+        }
+
+        .static-noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+            background-size: 3px 3px;
+            opacity: 0.04;
+            animation: noiseShift 0.4s steps(2) infinite;
+            mix-blend-mode: screen;
+        }
+
+        .roll-line {
+            position: fixed;
+            left: 0;
+            top: -15%;
+            width: 100%;
+            height: 18vh;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(255,255,255,0.04) 45%,
+                rgba(255,255,255,0.10) 50%,
+                rgba(255,255,255,0.04) 55%,
+                transparent 100%
+            );
+            filter: blur(1px);
+            opacity: 0.7;
+            mix-blend-mode: screen;
+            pointer-events: none;
+            animation: horizontalRoll 7s linear infinite;
+        }
+
+        .screen {
+            width: min(780px, 100%);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            transform: translateZ(0);
+        }
+
+        .screen.break {
+            animation: hardJitter 0.18s infinite;
+        }
+
+        .title {
+            margin: 0 0 14px;
+            font-family: "Creepster", cursive;
+            font-size: clamp(3rem, 8vw, 5.8rem);
+            letter-spacing: 0.1em;
+            color: #f2f2f4;
+            text-shadow:
+                0 0 10px rgba(255, 59, 59, 0.28),
+                0 0 30px rgba(255, 59, 59, 0.14);
+            position: relative;
+            line-height: 0.95;
+        }
+
+        .title::before,
+        .title::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            opacity: 0.6;
+        }
+
+        .title::before {
+            color: #ff3a3a;
+            transform: translate(2px, 0);
+            clip-path: inset(0 0 52% 0);
+            animation: glitchTop 2.2s infinite linear alternate-reverse;
+        }
+
+        .title::after {
+            color: #7a7aff;
+            transform: translate(-2px, 0);
+            clip-path: inset(52% 0 0 0);
+            animation: glitchBottom 2.7s infinite linear alternate-reverse;
+        }
+
+        .subtitle {
+            margin: 0 0 28px;
+            color: var(--muted);
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .journal-entry {
+            position: relative;
+            padding: 28px 30px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            box-shadow:
+                0 18px 60px var(--shadow),
+                inset 0 0 0 1px rgba(255,255,255,0.03);
+            backdrop-filter: blur(3px);
+            text-align: left;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .journal-entry::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 59, 59, 0.07), transparent 35%);
+            pointer-events: none;
+        }
+
+        .journal-entry::after {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background: linear-gradient(
+                120deg,
+                transparent 45%,
+                rgba(255,255,255,0.06) 50%,
+                transparent 55%
+            );
+            transform: translateX(-60%);
+            animation: trackingSweep 7s linear infinite;
+            pointer-events: none;
+            opacity: 0.28;
+        }
+
+        .entry-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--muted);
+            font-size: 0.82rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .entry-meta strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .journal-entry p {
+            margin: 0 0 16px;
+            line-height: 1.78;
+            font-size: 1rem;
+        }
+
+        .static {
+            color: #6d6d76;
+            letter-spacing: 0.12em;
+        }
+
+        .hum {
+            margin-top: 22px;
+            padding: 12px 0 8px;
+            text-align: center;
+            letter-spacing: 0.7em;
+            font-size: 1.05rem;
+            color: rgba(255, 59, 59, 0.95);
+            text-shadow: 0 0 12px rgba(255, 59, 59, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            animation: humPulse 1.9s ease-in-out infinite;
+        }
+
+        .hidden-message {
+            margin-top: 16px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 59, 59, 0.22);
+            background: rgba(255, 20, 20, 0.06);
+            color: #ffcccc;
+            text-align: center;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(8px);
+            filter: blur(8px);
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+        }
+
+        .hidden-message.show {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+            animation: hiddenPulse 1.8s ease-in-out infinite;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 22px;
+            color: #a0a0aa;
+            text-decoration: none;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+            transform: translateX(-2px);
+        }
+
+        .flicker { animation: flickerSoft 6s infinite; }
+
+        @keyframes humPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.01); }
+        }
+
+        @keyframes hiddenPulse {
+            0%, 100% { text-shadow: 0 0 8px rgba(255, 59, 59, 0.12); }
+            50% { text-shadow: 0 0 18px rgba(255, 59, 59, 0.28); }
+        }
+
+        @keyframes flickerSoft {
+            0%, 97%, 100% { opacity: 1; }
+            98% { opacity: 0.92; }
+            99% { opacity: 0.78; }
+        }
+
+        @keyframes scanMove {
+            0% { transform: translateY(-2%); }
+            100% { transform: translateY(2%); }
+        }
+
+        @keyframes noiseShift {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, -1px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes trackingSweep {
+            0% { transform: translateX(-70%) skewX(-10deg); }
+            100% { transform: translateX(70%) skewX(-10deg); }
+        }
+
+        @keyframes horizontalRoll {
+            0% { transform: translateY(-20vh); }
+            100% { transform: translateY(120vh); }
+        }
+
+        @keyframes glitchTop {
+            0%, 100% { clip-path: inset(0 0 52% 0); transform: translate(2px, 0); }
+            20% { clip-path: inset(0 0 44% 0); transform: translate(3px, -1px); }
+            40% { clip-path: inset(0 0 61% 0); transform: translate(1px, 0); }
+            60% { clip-path: inset(0 0 47% 0); transform: translate(4px, 1px); }
+            80% { clip-path: inset(0 0 56% 0); transform: translate(2px, -1px); }
+        }
+
+        @keyframes glitchBottom {
+            0%, 100% { clip-path: inset(52% 0 0 0); transform: translate(-2px, 0); }
+            20% { clip-path: inset(46% 0 0 0); transform: translate(-3px, 1px); }
+            40% { clip-path: inset(60% 0 0 0); transform: translate(-1px, 0); }
+            60% { clip-path: inset(50% 0 0 0); transform: translate(-4px, -1px); }
+            80% { clip-path: inset(55% 0 0 0); transform: translate(-2px, 1px); }
+        }
+
+        @keyframes hardJitter {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-2px, 1px); }
+            75% { transform: translate(2px, 0); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .chromatic {
+            animation: chromaticShift 1.3s infinite linear;
+        }
+
+        @keyframes chromaticShift {
+            0%, 100% {
+                text-shadow:
+                    2px 0 0 rgba(255, 59, 59, 0.6),
+                    -2px 0 0 rgba(122, 122, 255, 0.5);
+                transform: translate(0, 0);
+            }
+            25% {
+                text-shadow:
+                    3px 1px 0 rgba(255, 59, 59, 0.55),
+                    -3px -1px 0 rgba(122, 122, 255, 0.45);
+                transform: translate(1px, 0);
+            }
+            50% {
+                text-shadow:
+                    1px 0 0 rgba(255, 59, 59, 0.6),
+                    -1px 0 0 rgba(122, 122, 255, 0.5);
+                transform: translate(-1px, 0);
+            }
+            75% {
+                text-shadow:
+                    4px 0 0 rgba(255, 59, 59, 0.4),
+                    -4px 0 0 rgba(122, 122, 255, 0.35);
+                transform: translate(0, 1px);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .journal-entry { padding: 22px 18px; }
+            .subtitle { letter-spacing: 0.18em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="static-noise"></div>
+    <div class="roll-line"></div>
+
+    <main id="screen" class="screen">
+        <h1 class="title flicker" data-text="CAN YOU HEAR IT?">CAN YOU HEAR IT?</h1>
+        <p class="subtitle">Transmission Record // Analog Interference Detected</p>
+
+        <section class="journal-entry flicker" aria-label="journal entry">
+            <div class="entry-meta">
+                <span><strong>LOG_ENTRY</strong> AUGUST 12, 1994</span>
+                <span>FILE STATUS: PARTIAL</span>
+            </div>
+
+            <p>It started as a vibration in the floorboards. Then the teeth started aching. Elias says it's just the new radio tower, but the birds have stopped landing on the wires.</p>
+
+            <p>Last night, I saw Mrs. Gable standing in her garden at 3:00 AM. She wasn't moving. She was just... <span class="static">[REDACTED]</span>. When I called her name, she didn't turn around, but the buzzing in my ears got louder.</p>
+
+            <div class="hum">BZZZZZZZZZZZZZZZZZ</div>
+            <div id="hiddenMessage" class="hidden-message">HE IS WATCHING</div>
+        </section>
+
+        <a href="index.html" class="back-link">&lt;&lt; RETURN TO DIRECTORY</a>
+    </main>
+
+    <audio id="humAudio" loop preload="auto">
+        <source src="hum.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const root = document.documentElement;
+        const audio = document.getElementById('humAudio');
+        const screen = document.getElementById('screen');
+        const hiddenMessage = document.getElementById('hiddenMessage');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            root.style.setProperty('--mx', `${x}%`);
+            root.style.setProperty('--my', `${y}%`);
+        });
+
+        setInterval(() => {
+            document.body.style.opacity = (Math.random() > 0.985) ? '0.94' : '1';
+        }, 120);
+
+        const startAudio = async () => {
+            try {
+                audio.volume = 0.18;
+                await audio.play();
+                window.removeEventListener('pointerdown', startAudio);
+                window.removeEventListener('keydown', startAudio);
+            } catch (e) {}
+        };
+
+        window.addEventListener('pointerdown', startAudio);
+        window.addEventListener('keydown', startAudio);
+        setTimeout(startAudio, 300);
+
+        setTimeout(() => {
+            screen.classList.add('break');
+            hiddenMessage.classList.add('show');
+            document.querySelector('.journal-entry').classList.add('chromatic');
+        }, 5200);
+
+        setTimeout(() => {
+            screen.classList.remove('break');
+        }, 7600);
+    </script>
+</body>
+</html>
